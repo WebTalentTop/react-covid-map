@@ -27,7 +27,8 @@ export default function MapView({ center, zoom, defaultRadius, casesData }) {
       const sum = rangeData.length > 0 && rangeData
         .map(item => item.count)
         .reduce((prev, curr) => prev + curr, 0);
-      if (sum > 0) setTotal(sum)
+      const total = sum > 0 ? sum : 0;
+      setTotal(total);
     }
   }, [radius, currentPos, casesData]);
   
