@@ -19,21 +19,21 @@ const addRecord = (req, res) => {
   const { body } = req;
 
   const {
-    date, location, count,
+    location, count, lat, lng
   } = body;
 
 
-  if (!date || !location || !count) {
+  if (!location || !count || !lat || !lng) {
     res.status(400).send('Missing Parameters');
     return;
   }
 
-  const newDate = new Date(date);
-
   const newCase = new Case({
-    date: newDate,
+    date: new Date(),
     location,
     count,
+    lat,
+    lng
   });
 
   newCase.save((err, data) => {
@@ -77,6 +77,8 @@ const updateRecord = (req, res) => {
       date,
       location,
       count,
+      lat,
+      lng
     },
     params: {
       id,
@@ -94,6 +96,8 @@ const updateRecord = (req, res) => {
       date,
       location,
       count,
+      lat,
+      lng
     });
 
     const newDate = new Date(date);
