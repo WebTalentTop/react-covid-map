@@ -1,13 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
+import Paper from '@material-ui/core/Paper';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
 import TableView from './TableView';
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`wrapped-tabpanel-${index}`}
+      aria-labelledby={`wrapped-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
 
 export default function Main() {
   const [casesData, setCasesData] = useState([])
   const [timer, setTimer] = useState(null)
   const [isMounted, setIsMounted] = useState(false)
-
+  const [value, setValue] = React.useState(0);
 
   async function updateCases () {
     try {
@@ -21,26 +43,49 @@ export default function Main() {
     setTimer(setTimeout(updateCases, 200))
   }
 
+  async function onDelete(id) {
+    if (id) {
+      try {
+        await fetch(`http://localhost:5000/api/cases/${id}`, { method: 'DELETE' })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
   useEffect(() => {
     if (!isMounted) {
       updateCases()
       setIsMounted(true)
     }
-  })
+  });
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   return (
-    <Tabs>
-      <TabList>
-        <Tab>Map View</Tab>
-        <Tab>Table View</Tab>
-      </TabList>
-
-      <TabPanel>
+    <Paper square>
+      <Tabs
+        value={value}
+        indicatorColor="primary"
+        textColor="primary"
+        onChange={handleChange}
+        aria-label="disabled tabs example"
+      >
+        <Tab label="Map View" />
+        <Tab label="Table View" />
+      </Tabs>
+      <TabPanel value={value} index={0}>
+        Item One
       </TabPanel>
-      <TabPanel>
-        <TableView casesData={casesData} />
+      <TabPanel value={value} index={1}>
+        <TableView
+          casesData={casesData}
+          onDelete={onDelete}
+        />
       </TabPanel>
-    </Tabs>
+    </Paper>
   )
 }
 
