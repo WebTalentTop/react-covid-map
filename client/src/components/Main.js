@@ -26,6 +26,12 @@ function TabPanel(props) {
   );
 }
 
+const mapConfig = {
+  zoom: 12,
+  center: { lat: 51.5287718, lng: -0.2416804 },
+  radius: 1000
+}
+
 export default function Main() {
   const [casesData, setCasesData] = useState([])
   const [timer, setTimer] = useState(null)
@@ -40,14 +46,33 @@ export default function Main() {
     } catch (e) {
       console.error(e)
     }
-    clearTimeout(timer)
-    setTimer(setTimeout(updateCases, 200))
+    // clearTimeout(timer)
+    // setTimer(setTimeout(updateCases, 200))
   }
 
   async function onDelete(id) {
     if (id) {
       try {
         await fetch(`http://localhost:5000/api/cases/${id}`, { method: 'DELETE' })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
+  async function onAdd(record) {
+    if (record) {
+      try {
+        await fetch(
+          `http://localhost:5000/api/cases`,
+          { 
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(record)
+          }
+        )
       } catch (e) {
         console.error(e)
       }
@@ -79,15 +104,19 @@ export default function Main() {
       </Tabs>
       <TabPanel value={value} index={0}>
         <MapView
-          zoom={8}
-          defaultRadius={20000}
-          center={{ lat: 51.5287718, lng: -0.2416804 }}
+          casesData={casesData}
+          zoom={mapConfig.zoom}
+          defaultRadius={mapConfig.radius}
+          center={mapConfig.center}
         />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <TableView
           casesData={casesData}
           onDelete={onDelete}
+          onAdd={onAdd}
+          zoom={mapConfig.zoom}
+          center={mapConfig.center}
         />
       </TabPanel>
     </Paper>
