@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
@@ -14,9 +15,9 @@ import ReactLeafletSearch from "react-leaflet-search";
 import DeleteDialog from './DeleteDialog';
 
 const columns = [
-  { id: 'date', label: 'Last Update', minWidth: 170, format: (value) => value.toLocaleString('en-US') },
-  { id: 'location', label: 'Location', minWidth: 170, format: (value) => value.toLocaleString('en-US') },
-  { id: 'count', label: 'Cases', minWidth: 170, format: (value) => value.toLocaleString('en-US') },
+  { id: 'date', label: 'Last Update', minWidth: 170},
+  { id: 'location', label: 'Location', minWidth: 170 },
+  { id: 'count', label: 'Cases', minWidth: 170 },
   { id: 'actions', label: 'Actions', minWidth: 170 },
 ];
 
@@ -188,14 +189,17 @@ const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }
                 <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
                   {columns.map((column) => {
                     const value = row[column.id];
-                    if (column.id !== 'actions') {
+                    if (column.id === 'date') {
+                      return <TableCell key={`${column.id}-${row._id}`} align={column.align}>
+                        {moment(new Date(value)).format('YYYY/MM/DD HH:mm:ss').toString()}
+                      </TableCell>
+                    } else if (column.id !== 'actions') {
                       return (
                         <TableCell key={`${column.id}-${row._id}`} align={column.align}>
                           {column.format && typeof value === 'number' ? column.format(value) : value}
                         </TableCell>
                       );
-                    }
-                    else {
+                    } else {
                       return (
                         <TableCell key={`action-${row._id}`}>
                           <Button onClick={() => {}} color="primary">
