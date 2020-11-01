@@ -27,21 +27,26 @@ const useStyles = makeStyles({
   },
 });
 
-export default function StickyHeadTable({ casesData, onDelete }) {
+const TableView = function ({ casesData, onDelete, onEdit }) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [open, setOpen] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
   const [currentId, setCurrentId] = useState(null);
 
-  const handleClickOpen = (id) => {
-    setOpen(true);
+  const handleClickOpenDelete = (id) => {
+    setOpenDelete(true);
     setCurrentId(id);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
   };
+
+  const handleDelete = () => {
+    setOpenDelete(false);
+    onDelete(currentId);
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -52,16 +57,11 @@ export default function StickyHeadTable({ casesData, onDelete }) {
     setPage(0);
   };
 
-  const handleDelete = () => {
-    setOpen(false);
-    onDelete(currentId);
-  }
-
   return (
     <Paper className={classes.root}>
       <DeleteDialog
-        open={open}
-        handleClose={handleClose}
+        open={openDelete}
+        handleClose={handleCloseDelete}
         handleDelete={handleDelete}
       />
       <TableContainer className={classes.container}>
@@ -80,7 +80,7 @@ export default function StickyHeadTable({ casesData, onDelete }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {casesData && casesData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+            {Array.isArray(casesData) && casesData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
                   {columns.map((column) => {
@@ -95,7 +95,10 @@ export default function StickyHeadTable({ casesData, onDelete }) {
                     else {
                       return (
                         <TableCell key={`action-${row._id}`}>
-                          <Button onClick={() => handleClickOpen(row._id)} color="primary">
+                          <Button onClick={() => {}} color="primary">
+                            Edit
+                          </Button>
+                          <Button onClick={() => handleClickOpenDelete(row._id)} color="primary">
                             Delete
                           </Button>
                         </TableCell>
@@ -120,3 +123,9 @@ export default function StickyHeadTable({ casesData, onDelete }) {
     </Paper>
   );
 }
+
+const comparisonFn = function (prevProps, nextProps) {
+  return prevProps.casesData === nextProps.casesData;
+};
+
+export default React.memo(TableView, comparisonFn);
