@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,6 +8,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
+import { Map, TileLayer, Marker, Popup } from "react-leaflet";
+import ReactLeafletSearch from "react-leaflet-search";
 import DeleteDialog from './DeleteDialog';
 
 const columns = [
@@ -25,15 +27,29 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 440,
   },
+  content: {
+    padding: 16
+  },
+  text: {
+    width: '100%',
+    marginBottom: 16,
+    marginRight: 16
+  }
 });
 
-const TableView = function ({ casesData, onDelete, onEdit }) {
+const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [currentId, setCurrentId] = useState(null);
+  const [currentPos, setCurrentPos] = useState(center);
+  const [currentCount, setCurrentCount] = useState(0);
+  const [currentLocation, setCurrentLocation] = useState('');
 
+  const handleClick = e => {
+    setCurrentPos(e.latlng);
+  }
   const handleClickOpenDelete = (id) => {
     setOpenDelete(true);
     setCurrentId(id);
@@ -48,6 +64,16 @@ const TableView = function ({ casesData, onDelete, onEdit }) {
     onDelete(currentId);
   }
 
+  const handleAddNew = () => {
+    const newRecord = {
+      location: currentLocation,
+      count: currentCount,
+      lat: currentPos.lat,
+      lng: currentPos.lng,
+    }
+    onAdd(newRecord);
+  }
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -58,7 +84,70 @@ const TableView = function ({ casesData, onDelete, onEdit }) {
   };
 
   return (
-    <Paper className={classes.root}>
+    <div className={classes.root}>
+      <Map center={center} zoom={zoom} onClick={handleClick}>
+        <TileLayer
+            url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
+        />
+        {currentPos &&
+          <Marker position={currentPos}>
+            <Popup position={currentPos}>
+              Current location: <pre>{JSON.stringify(currentPos, null, 2)}</pre>
+            </Popup>
+          </Marker>
+        }
+        <ReactLeafletSearch
+          position="topright"
+          onChange={(info) => {
+            setCurrentPos(info.latLng);
+            setCurrentLocation(info.info);
+          }}
+        />
+      </Map>
+      <section className={classes.content}>
+        <TextField
+          label="Location"
+          value={currentLocation}
+          className={classes.text}
+          onChange={e => setCurrentLocation(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          label="Latitude"
+          type="number"
+          className={classes.text}
+          value={currentPos && currentPos.lat}
+          onChange={e => setCurrentPos(e.target.value, currentPos.lng)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          label="Longitude"
+          type="number"
+          className={classes.text}
+          value={currentPos && currentPos.lng}
+          onChange={e => setCurrentPos(currentPos.lat, e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          label="Count"
+          type="number"
+          className={classes.text}
+          value={currentCount}
+          onChange={e => setCurrentCount(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <Button onClick={handleAddNew} color="primary">
+          Add New
+        </Button>
+      </section>
       <DeleteDialog
         open={openDelete}
         handleClose={handleCloseDelete}
@@ -120,7 +209,7 @@ const TableView = function ({ casesData, onDelete, onEdit }) {
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </div>
   );
 }
 
