@@ -4,6 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import TableView from './TableView';
+import MapView from './MapView';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,10 +75,14 @@ export default function Main() {
         aria-label="disabled tabs example"
       >
         <Tab label="Map View" />
-        <Tab label="Table View" />
+        <Tab label="Edit View" />
       </Tabs>
       <TabPanel value={value} index={0}>
-        Item One
+        <MapView
+          zoom={8}
+          defaultRadius={20000}
+          center={{ lat: 51.5287718, lng: -0.2416804 }}
+        />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <TableView
