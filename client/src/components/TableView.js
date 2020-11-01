@@ -47,9 +47,23 @@ const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }
   const [currentCount, setCurrentCount] = useState(0);
   const [currentLocation, setCurrentLocation] = useState('');
 
+  async function getAddress(latlng) {
+    try {
+      const result = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`)
+      const data = await result.json();
+      if (data && data.address) {
+        setCurrentLocation(data.display_name)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const handleClick = e => {
     setCurrentPos(e.latlng);
+    getAddress(e.latlng);
   }
+
   const handleClickOpenDelete = (id) => {
     setOpenDelete(true);
     setCurrentId(id);
