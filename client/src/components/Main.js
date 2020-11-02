@@ -5,6 +5,14 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import TableView from './TableView';
 import MapView from './MapView';
+import { isEmpty, isEqual, xorWith } from 'lodash';
+
+
+import socketIOClient from "socket.io-client"
+
+const ENDPOINT = "http://127.0.0.1:7000";
+const socket = socketIOClient(ENDPOINT);
+const isArrayEqual = (x, y) => isEmpty(xorWith(x, y, isEqual));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -29,81 +37,31 @@ function TabPanel(props) {
 const mapConfig = {
   zoom: 12,
   center: { lat: 40.719176490550595, lng: -73.98377895355226 },
-  radius: 10000
+  radius: 3000
 }
 
 export default function Main() {
   const [casesData, setCasesData] = useState([])
-  const [timer, setTimer] = useState(null)
-  const [isMounted, setIsMounted] = useState(false)
   const [value, setValue] = React.useState(0);
 
-  async function updateCases () {
-    try {
-      const result = await fetch('http://localhost:5000/api/cases')
-      const data = await result.json()
-      setCasesData(data);
-    } catch (e) {
-      console.error(e)
-    }
-    // clearTimeout(timer)
-    // setTimer(setTimeout(updateCases, 200))
-  }
-
   async function onDelete(id) {
-    if (id) {
-      try {
-        await fetch(`http://localhost:5000/api/cases/${id}`, { method: 'DELETE' })
-      } catch (e) {
-        console.error(e)
-      }
-    }
+    socket.emit("delete-record", id);
   }
 
   async function onUpdate(record) {
-    if (record) {
-      try {
-        await fetch(
-          `http://localhost:5000/api/cases/${record._id}`,
-          { 
-            method: 'PUT',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(record)
-          }
-        )
-      } catch (e) {
-        console.error(e)
-      }
-    }
+    socket.emit("edit-record", record);
   }
 
   async function onAdd(record) {
-    if (record) {
-      try {
-        await fetch(
-          `http://localhost:5000/api/cases`,
-          { 
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(record)
-          }
-        )
-      } catch (e) {
-        console.error(e)
-      }
-    }
+    socket.emit("add-record", record);
   }
 
   useEffect(() => {
-    if (!isMounted) {
-      updateCases()
-      setIsMounted(true)
-    }
-  }, [casesData]);
+    socket.on("FromAPI", data => {
+      if (!isArrayEqual(data, casesData)) 
+        setCasesData(data);
+    });
+  });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

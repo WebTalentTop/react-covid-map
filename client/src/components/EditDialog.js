@@ -16,21 +16,20 @@ const useStyles = makeStyles({
 });
 
 
-export default function EditDialog({ open, handleClose, handleEdit, record, currentId }) {
+export default function EditDialog({ open, handleClose, handleEdit, record, currentId, setEdit }) {
   const classes = useStyles();
-  const [currentLocation, setCurrentLocation] = useState('');
-  const [currentCount, setCurrentCount] = useState(0);
-  const [currentLat, setCurrentLat] = useState(0);
-  const [currentLng, setCurrentLng] = useState(0);
+  // const [currentLocation, setCurrentLocation] = useState('');
+  // const [currentCount, setCurrentCount] = useState(0);
+  // const [currentLat, setCurrentLat] = useState(0);
+  // const [currentLng, setCurrentLng] = useState(0);
 
-  useEffect(() => {
-    if (record && record.location) setCurrentLocation(record.location);
-    if (record && record.count) setCurrentCount(record.count);
-    if (record && record.lat) setCurrentLat(record.lat);
-    if (record && record.lng) setCurrentLng(record.lng);
-
-  }, [record]);
-
+  // useEffect(() => {
+  //   if (record && record.location) setCurrentLocation(record.location);
+  //   if (record && record.count) setCurrentCount(record.count);
+  //   if (record && record.lat) setCurrentLat(record.lat);
+  //   if (record && record.lng) setCurrentLng(record.lng);
+  // }, [record]);
+  
   return (
     <div>
       <Dialog
@@ -43,9 +42,9 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
         <DialogContent>
         <TextField
           label="Location"
-          value={currentLocation}
+          value={record.location}
           className={classes.text}
-          onChange={e => setCurrentLocation(e.target.value)}
+          onChange={e => setEdit({ location: e.target.value })}
           InputLabelProps={{
             shrink: true,
           }}
@@ -54,8 +53,8 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           label="Latitude"
           type="number"
           className={classes.text}
-          value={currentLat}
-          onChange={e => setCurrentLat(e.target.value)}
+          value={record.lat}
+          onChange={e => setEdit({ lat: e.target.value })}
           InputLabelProps={{
             shrink: true,
           }}
@@ -64,8 +63,8 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           label="Longitude"
           type="number"
           className={classes.text}
-          value={currentLng}
-          onChange={e => setCurrentLng(e.target.value)}
+          value={record.lng}
+          onChange={e => setEdit({ lng: e.target.value })}
           InputLabelProps={{
             shrink: true,
           }}
@@ -74,8 +73,8 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           label="Count"
           type="number"
           className={classes.text}
-          value={currentCount}
-          onChange={e => setCurrentCount(e.target.value)}
+          value={record.count}
+          onChange={e => setEdit({ count: e.target.value })}
           InputLabelProps={{
             shrink: true,
           }}
@@ -87,10 +86,10 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           </Button>
           <Button onClick={() => handleEdit({
             _id: currentId,
-            location: currentLocation,
-            count: currentCount,
-            lat: currentLat,
-            lng: currentLng,
+            location: record.location,
+            count: record.count,
+            lat: record.lat,
+            lng: record.lng,
           })} color="primary" autoFocus>
             Update
           </Button>

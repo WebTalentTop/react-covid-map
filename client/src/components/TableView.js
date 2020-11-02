@@ -52,12 +52,12 @@ const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center
   const [currentId, setCurrentId] = useState(null);
   const [currentPos, setCurrentPos] = useState(center);
   const [currentCount, setCurrentCount] = useState(0);
+  const [currentRecord, setCurrentRecord] = useState(null);
   const [currentLocation, setCurrentLocation] = useState('');
   const [cityState, setCityState] = useState('');
   const [bounds, setBounds] = useState([]);
   const [boundOptions, setBoundOptions] = useState([]);
   const [rangeData, setRangeData] = useState([]);
-
   async function getAddress(latlng) {
     try {
       const result = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`)
@@ -111,6 +111,7 @@ const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center
 
   const handleClickOpenEdit = (id) => {
     setCurrentId(id);
+    setCurrentRecord(rangeData.find(item => item._id === id))
     setOpenEdit(true);
   };
 
@@ -130,6 +131,10 @@ const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center
   const handleEdit = (record) => {
     setOpenEdit(false);
     onUpdate(record);
+  }
+
+  const setEdit = (payload) => {
+    setCurrentRecord({ ...currentRecord, ...payload})
   }
 
   const handleAddNew = () => {
@@ -265,9 +270,10 @@ const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center
         <EditDialog
           open={openEdit}
           currentId={currentId}
-          record={rangeData.find(item => item._id === currentId)}
+          record={currentRecord}
           handleClose={handleCloseEdit}
           handleEdit={handleEdit}
+          setEdit={setEdit}
         />
       }
       <TableContainer className={classes.container}>
