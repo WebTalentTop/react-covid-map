@@ -60,6 +60,25 @@ export default function Main() {
     }
   }
 
+  async function onUpdate(record) {
+    if (record) {
+      try {
+        await fetch(
+          `http://localhost:5000/api/cases/${record._id}`,
+          { 
+            method: 'PUT',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(record)
+          }
+        )
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
   async function onAdd(record) {
     if (record) {
       try {
@@ -114,6 +133,7 @@ export default function Main() {
         <TableView
           casesData={casesData}
           onDelete={onDelete}
+          onUpdate={onUpdate}
           onAdd={onAdd}
           zoom={mapConfig.zoom}
           center={mapConfig.center}

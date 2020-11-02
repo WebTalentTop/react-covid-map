@@ -13,6 +13,7 @@ import TextField from '@material-ui/core/TextField';
 import { Map, TileLayer, Marker, Popup, Rectangle } from "react-leaflet";
 import ReactLeafletSearch from "react-leaflet-search";
 import DeleteDialog from './DeleteDialog';
+import EditDialog from './EditDialog';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const columns = [
@@ -42,11 +43,12 @@ const useStyles = makeStyles({
 const WAIT_INTERVAL = 1000;
 let timerID;
 
-const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }) {
+const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center }) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openDelete, setOpenDelete] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [currentPos, setCurrentPos] = useState(center);
   const [currentCount, setCurrentCount] = useState(0);
@@ -102,17 +104,32 @@ const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }
   }
 
   const handleClickOpenDelete = (id) => {
-    setOpenDelete(true);
     setCurrentId(id);
+    setOpenDelete(true);
+  };
+
+
+  const handleClickOpenEdit = (id) => {
+    setCurrentId(id);
+    setOpenEdit(true);
   };
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
 
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
   const handleDelete = () => {
     setOpenDelete(false);
     onDelete(currentId);
+  }
+
+  const handleEdit = (record) => {
+    setOpenEdit(false);
+    onUpdate(record);
   }
 
   const handleAddNew = () => {
@@ -244,6 +261,15 @@ const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }
         handleClose={handleCloseDelete}
         handleDelete={handleDelete}
       />
+      {rangeData && rangeData.find(item => item._id === currentId) &&
+        <EditDialog
+          open={openEdit}
+          currentId={currentId}
+          record={rangeData.find(item => item._id === currentId)}
+          handleClose={handleCloseEdit}
+          handleEdit={handleEdit}
+        />
+      }
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -278,7 +304,7 @@ const TableView = function ({ casesData, onDelete, onAdd, onEdit, zoom, center }
                     } else {
                       return (
                         <TableCell key={`action-${row._id}`}>
-                          <Button onClick={() => {}} color="primary">
+                          <Button onClick={() => handleClickOpenEdit(row._id)} color="primary">
                             Edit
                           </Button>
                           <Button onClick={() => handleClickOpenDelete(row._id)} color="primary">
