@@ -143,8 +143,12 @@ const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center
       count: currentCount,
       lat: currentPos.lat,
       lng: currentPos.lng,
+    };
+    if (currentLocation === '') {
+      alert('Location is empty. Please pick a location.');
+    } else {
+      onAdd(newRecord);
     }
-    onAdd(newRecord);
   }
 
   const handleChangePage = (event, newPage) => {
