@@ -43,7 +43,7 @@ const useStyles = makeStyles({
 const WAIT_INTERVAL = 1000;
 let timerID;
 
-const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center }) {
+const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center, greenIcon }) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -206,6 +206,14 @@ const TableView = function ({ casesData, onDelete, onAdd, onUpdate, zoom, center
             </Popup>
           </Marker>
         }
+        {rangeData.map (item => 
+          <Marker position={{ lat: item.lat, lng: item.lng}} icon={greenIcon}>
+            <Popup position={{ lat: item.lat, lng: item.lng}}>
+                <span>Location: {item.location}</span>
+                <pre>Cases: {item.count}</pre>
+            </Popup>
+          </Marker>
+        )}
         {bounds.length > 0 &&
           <Rectangle bounds={bounds} />
         }

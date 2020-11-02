@@ -3,9 +3,8 @@ import { Map, TileLayer, Marker, Circle, Popup, Rectangle } from "react-leaflet"
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-
-import ReactLeafletSearch from "react-leaflet-search";
 import L from 'leaflet';
+import ReactLeafletSearch from "react-leaflet-search";
 
 const useStyles = makeStyles({
   text: {
@@ -18,7 +17,7 @@ const useStyles = makeStyles({
 const WAIT_INTERVAL = 1000;
 let timerID;
 
-export default function MapView({ center, zoom, defaultRadius, casesData }) {
+export default function MapView({ center, zoom, defaultRadius, casesData, greenIcon }) {
   const classes = useStyles();
   const [currentPos, setCurrentPos] = useState(center);
   const [radius, setRadius] = useState(defaultRadius);
@@ -146,6 +145,14 @@ export default function MapView({ center, zoom, defaultRadius, casesData }) {
             />
           </Marker>
         }
+        {casesData.map (item => 
+          <Marker position={{ lat: item.lat, lng: item.lng}} icon={greenIcon}>
+            <Popup position={{ lat: item.lat, lng: item.lng}}>
+                <span>Location: {item.location}</span>
+                <pre>Cases: {item.count}</pre>
+            </Popup>
+          </Marker>
+        )}
         {bounds.length > 0 &&
           <Rectangle bounds={bounds} />
         }

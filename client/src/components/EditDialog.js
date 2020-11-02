@@ -42,7 +42,7 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
         <DialogContent>
         <TextField
           label="Location"
-          value={record.location}
+          value={record && record.location}
           className={classes.text}
           onChange={e => setEdit({ location: e.target.value })}
           InputLabelProps={{
@@ -53,7 +53,7 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           label="Latitude"
           type="number"
           className={classes.text}
-          value={record.lat}
+          value={record && record.lat}
           onChange={e => setEdit({ lat: e.target.value })}
           InputLabelProps={{
             shrink: true,
@@ -63,7 +63,7 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           label="Longitude"
           type="number"
           className={classes.text}
-          value={record.lng}
+          value={record && record.lng}
           onChange={e => setEdit({ lng: e.target.value })}
           InputLabelProps={{
             shrink: true,
@@ -73,7 +73,7 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           label="Count"
           type="number"
           className={classes.text}
-          value={record.count}
+          value={record && record.count}
           onChange={e => setEdit({ count: e.target.value })}
           InputLabelProps={{
             shrink: true,
@@ -86,10 +86,10 @@ export default function EditDialog({ open, handleClose, handleEdit, record, curr
           </Button>
           <Button onClick={() => handleEdit({
             _id: currentId,
-            location: record.location,
-            count: record.count,
-            lat: record.lat,
-            lng: record.lng,
+            location: record && record.location,
+            count: record && record.count,
+            lat: record && record.lat,
+            lng: record && record.lng,
           })} color="primary" autoFocus>
             Update
           </Button>
