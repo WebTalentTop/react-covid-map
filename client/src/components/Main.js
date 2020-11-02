@@ -28,8 +28,8 @@ function TabPanel(props) {
 
 const mapConfig = {
   zoom: 12,
-  center: { lat: 51.5287718, lng: -0.2416804 },
-  radius: 1000
+  center: { lat: 40.719176490550595, lng: -73.98377895355226 },
+  radius: 10000
 }
 
 export default function Main() {
@@ -42,7 +42,7 @@ export default function Main() {
     try {
       const result = await fetch('http://localhost:5000/api/cases')
       const data = await result.json()
-      setCasesData(data)
+      setCasesData(data);
     } catch (e) {
       console.error(e)
     }
@@ -84,7 +84,7 @@ export default function Main() {
       updateCases()
       setIsMounted(true)
     }
-  });
+  }, [casesData]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

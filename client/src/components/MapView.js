@@ -15,6 +15,9 @@ const useStyles = makeStyles({
   }
 });
 
+const WAIT_INTERVAL = 1000;
+let timerID;
+
 export default function MapView({ center, zoom, defaultRadius, casesData }) {
   const classes = useStyles();
   const [currentPos, setCurrentPos] = useState(center);
@@ -24,7 +27,6 @@ export default function MapView({ center, zoom, defaultRadius, casesData }) {
   const [cityState, setCityState] = useState('');
   const [bounds, setBounds] = useState([]);
   const [boundOptions, setBoundOptions] = useState([]);
-
   const handleClick = e => {
     setCurrentPos(e.latlng);
   }
@@ -81,10 +83,18 @@ export default function MapView({ center, zoom, defaultRadius, casesData }) {
 
   const handleBounds = (v) => {
     const boundArr = v && v.payload && JSON.parse(v.payload).boundingbox;
-    setBounds([]);
     if (Array.isArray(boundArr) && boundArr.length>0) {
       setBounds([ [boundArr[0], boundArr[2]], [boundArr[1], boundArr[3]] ]);
+    } else {
+      setBounds([])
     }
+  }
+
+  const handleSearch = (newInputValue) => {
+    clearTimeout(timerID)
+    timerID = setTimeout(() => {
+      setCityState(newInputValue);
+    }, WAIT_INTERVAL)
   }
   
   return (
@@ -96,7 +106,7 @@ export default function MapView({ center, zoom, defaultRadius, casesData }) {
         getOptionLabel={(option) => option.title}
         onChange={(e, v) => handleBounds(v)}
         onInputChange={(event, newInputValue) => {
-          setCityState(newInputValue);
+          handleSearch(newInputValue);
         }}
         style={{ width: 300 }}
         renderInput={(params) =>
