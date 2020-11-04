@@ -32,5 +32,8 @@
     "eslint-plugin-import": "^2.20.1",
     "mocha": "^7.0.1",
     "nodemon": "^1.19.4"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
