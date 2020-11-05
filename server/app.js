@@ -57,7 +57,7 @@ io.on("connection", socket => {
   socket.on("delete-record", recordId => {
     Case.findOne({ _id: recordId }, (err, record) => {
       if (err || !record) {
-        res.status(404).send('failed to fetch record');
+        socket.emit('failed to fetch record');
       } else {
         record.remove((removeErr) => {
           if (removeErr) {
