@@ -35,6 +35,9 @@
     "node-fetch": "^2.6.0",
     "socket.io": "^2.3.0"
   },
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

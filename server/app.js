@@ -1,9 +1,10 @@
-import mongoose from 'mongoose';
-import express from 'express';
-import bodyParser from 'body-parser';
-import config from './settings';
-import CaseService from './api/cases/routes';
-import Case from './api/cases/model';
+const mongoose = require("mongoose");
+const express = require("express");
+const bodyParser = require("body-parser");
+const config = require("./settings");
+const Case = require("./api/cases/model");
+
+// import CaseService from './api/cases/routes';
 
 const { ObjectId } = mongoose.Types;
 
@@ -35,7 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/cases', CaseService);
+// app.use('/api/cases', CaseService);
 
 // const PORT = 5000;
 const SOCKET_PORT = process.env.port || 7000;
