@@ -37,13 +37,13 @@ app.use((req, res, next) => {
 
 app.use('/api/cases', CaseService);
 
-const PORT = 5000;
-const SOCKET_PORT = 7000;
+// const PORT = 5000;
+const SOCKET_PORT = process.env.port || 7000;
 let interval;
 
-app.listen(PORT, () => {
-  console.log(`API server is running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`API server is running on port ${PORT}`);
+// });
 
 const server = http.createServer(app);
 const io = socketIO(server);
