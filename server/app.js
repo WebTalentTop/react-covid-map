@@ -43,7 +43,7 @@ app.get('/', (req, res, next) => res.sendFile(__dirname + './index.html'));
 // app.use('/api/cases', CaseService);
 
 // const PORT = 5000;
-const SOCKET_PORT = process.env.port || 7000;
+const SOCKET_PORT = process.env.PORT || 7000;
 let interval;
 
 // app.listen(PORT, () => {
