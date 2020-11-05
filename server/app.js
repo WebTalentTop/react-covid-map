@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const config = require("./settings");
 const Case = require("./api/cases/model");
-
+const path = require('path');
 // import CaseService from './api/cases/routes';
 
 const { ObjectId } = mongoose.Types;
