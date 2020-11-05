@@ -10,7 +10,7 @@ import L from 'leaflet';
 
 import socketIOClient from "socket.io-client"
 
-const ENDPOINT = "http://127.0.0.1:7000";
+const ENDPOINT = `https://boiling-tor-57674.herokuapp.com:${process.env.PORT}`;
 const socket = socketIOClient(ENDPOINT);
 const isArrayEqual = (x, y) => isEmpty(xorWith(x, y, isEqual));
 
